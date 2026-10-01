@@ -8,41 +8,45 @@ interface AuthGateProps {
 
 let verifiedRoleThisSession: string | null = null;
 
+function isAuthorized(allowedRole: string): boolean {
+  if (typeof window === "undefined") return false;
+  const token = localStorage.getItem("findnest_token");
+  const userStr = localStorage.getItem("findnest_user");
+  if (!token || !userStr) return false;
+  try {
+    const user = JSON.parse(userStr);
+    return user.role === allowedRole;
+  } catch {
+    return false;
+  }
+}
+
 export default function AuthGate({ allowedRole, children }: AuthGateProps) {
-  const [status, setStatus] = useState<"checking" | "ok">(
-    verifiedRoleThisSession === allowedRole ? "ok" : "checking"
-  );
+  const [status, setStatus] = useState<"checking" | "ok">(() => {
+    if (verifiedRoleThisSession === allowedRole || isAuthorized(allowedRole)) {
+      verifiedRoleThisSession = allowedRole;
+      return "ok";
+    }
+    return "checking";
+  });
 
-  function checkAuth() {
-    const token = localStorage.getItem("findnest_token");
-    const userStr = localStorage.getItem("findnest_user");
-
-    if (!token || !userStr) {
+  useLayoutEffect(() => {
+    if (!isAuthorized(allowedRole)) {
       verifiedRoleThisSession = null;
       window.location.href = "/";
       return;
     }
-
-    try {
-      const user = JSON.parse(userStr);
-      if (user.role !== allowedRole) {
-        verifiedRoleThisSession = null;
-        window.location.href = "/";
-        return;
-      }
-      verifiedRoleThisSession = allowedRole;
+    verifiedRoleThisSession = allowedRole;
+    if (status !== "ok") {
       setStatus("ok");
-    } catch {
-      window.location.href = "/";
     }
-  }
-
-  useLayoutEffect(() => {
-    checkAuth();
 
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === "findnest_token" || e.key === "findnest_user") {
-        checkAuth();
+        if (!isAuthorized(allowedRole)) {
+          verifiedRoleThisSession = null;
+          window.location.href = "/";
+        }
       }
     };
     window.addEventListener("storage", handleStorageChange);
@@ -76,7 +80,7 @@ export default function AuthGate({ allowedRole, children }: AuthGateProps) {
       window.removeEventListener("pageshow", handlePageShow);
       window.removeEventListener("popstate", handlePopState);
     };
-  }, []);
+  }, [allowedRole, status]);
 
   if (status === "checking") {
     return (

@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import api from "@/lib/api";
+import AuthGate from "@/components/AuthGate";
 
 interface MatchDetail {
   id: number;
@@ -32,7 +33,7 @@ function formatDate(dateStr: string) {
   });
 }
 
-export default function MatchedItemPage() {
+function MatchedItemContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const matchId = searchParams.get("matchId");
@@ -315,5 +316,13 @@ export default function MatchedItemPage() {
         ) : null}
       </main>
     </div>
+  );
+}
+
+export default function MatchedItemPage() {
+  return (
+    <AuthGate allowedRole="student">
+      <MatchedItemContent />
+    </AuthGate>
   );
 }

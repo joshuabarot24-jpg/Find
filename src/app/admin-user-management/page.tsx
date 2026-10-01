@@ -314,7 +314,12 @@ function AdminUserManagementContent() {
                         <span className="text-xs font-bold px-3 py-1.5 rounded-lg bg-green-50 text-green-700">ACTIVE</span>
                       )}
                       {user.flagged_for_review && (
-                        <span className="ml-2 text-xs font-bold px-3 py-1.5 rounded-lg bg-red-50 text-red-600" title={user.flag_reason || ""}>⚠ Flagged</span>
+                        <span className="ml-2 inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-lg bg-red-50 text-red-600 border border-red-200" title={user.flag_reason || ""}>
+                          <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                          </svg>
+                          Flagged
+                        </span>
                       )}
                     </td>
                     <td className="px-6 py-4">
@@ -446,9 +451,14 @@ function AdminUserManagementContent() {
             </div>
 
             {viewingUser.flagged_for_review && (
-              <div className="bg-red-50 border border-red-200 rounded-xl p-3 mb-4">
-                <p className="text-red-700 text-xs font-bold">⚠ Flagged For Review</p>
-                <p className="text-red-600 text-[11px] mt-0.5">{viewingUser.flag_reason || "This student has a history of rejected claims and appeals."}</p>
+              <div className="bg-red-50 border border-red-200 rounded-xl p-3 mb-4 flex items-start gap-2.5">
+                <svg className="w-4 h-4 text-red-600 mt-0.5 shrink-0 fill-current" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                </svg>
+                <div>
+                  <p className="text-red-700 text-xs font-bold">Flagged For Review</p>
+                  <p className="text-red-600 text-[11px] mt-0.5">{viewingUser.flag_reason || "This student has a history of rejected claims and appeals."}</p>
+                </div>
               </div>
             )}
 

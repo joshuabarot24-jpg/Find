@@ -126,8 +126,12 @@ function NotificationsContent() {
     const t = n.type.toLowerCase();
     if (t.includes("support")) {
       window.location.href = "/support";
-    } else if (t.includes("match") && n.match_id) {
-      window.location.href = `/matched-item?matchId=${n.match_id}`;
+    } else if (t.includes("match")) {
+      if (n.match_id) {
+        window.location.href = `/matched-item?matchId=${n.match_id}`;
+      } else {
+        window.location.href = "/claim-status";
+      }
     } else if (t.includes("status") || t.includes("reminder") || t.includes("claim")) {
       window.location.href = "/claim-status";
     }

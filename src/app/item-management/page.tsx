@@ -376,16 +376,21 @@ function ItemManagementContent() {
     setFormError("");
     setFormLoading(true);
     try {
+      const finalLocation = formIntakeType === "others"
+        ? (formLocationFound.trim() || formOthersSpecify.trim() || "N/A - School Inventory")
+        : formLocationFound.trim();
+
       await api.post("/found-items", {
         item_name: formName.trim(),
         category: formCategory,
-        description: formDescription.trim() || null,
+        description: formDescription.trim() || (formIntakeType === "others" && formOthersSpecify.trim() ? `Specification: ${formOthersSpecify.trim()}` : null),
         ai_description: formDescription.trim() || null,
-        location_found: formLocationFound.trim(),
+        location_found: finalLocation,
         date_found: formDateFound,
         photo_url: formPhotoUrl,
         storage_location: formStorageLocation.trim() || null,
         status: formIntakeType,
+        other_specification: formIntakeType === "others" ? (formOthersSpecify.trim() || null) : null,
       });
       setShowAddModal(false);
       resetForm();
